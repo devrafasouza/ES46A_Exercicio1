@@ -1,3 +1,6 @@
+import { db } from '../firebase/persistencia.js';
+import { collection, addDoc } from 'firebase/firestore';
+
 const n = document.querySelector("#nome");
 const n1 = document.getElementById("n1");
 const n2 = document.getElementById("n2");
@@ -18,7 +21,7 @@ bot2.addEventListener('click', limpar);
         }
 
 
-        botao.addEventListener('click', ()=> {
+        botao.addEventListener('click', async ()=> {
             let n = nome.value;
             let num1 = Number(n1.value);
             let num2 = Number(n2.value);
@@ -33,4 +36,18 @@ bot2.addEventListener('click', limpar);
         Média de Exercícios: ${m}<br>
         
         Média final: ${mf.toFixed(2)}`
-        })
+
+        try {
+            await addDoc(collection(db, "alunos"), {
+                nome: n,
+                nota1: num1,
+                nota2: num2,
+                nota3: num3,
+                mediaExercicios: m,
+                mediaFinal: mf.toFixed(2)
+            });
+            console.log("Dados salvos com sucesso!");
+        } catch (error) {
+            console.error("Erro ao salvar os dados: ", error);
+        }
+        }) 
